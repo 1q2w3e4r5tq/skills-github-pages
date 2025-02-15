@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Telegram Clicker</title>
+    <!-- Добавляем проверку окружения -->
+    <script>
+        // Имитация Telegram WebApp API для браузера
+        if (!window.Telegram?.WebApp) {
+            window.Telegram = {
+                WebApp: {
+                    initData: '',
+                    initDataUnsafe: {},
+                    MainButton: {
+                        setText: () => {},
+                        show: () => {},
+                        onClick: () => {},
+                        hide: () => {}
+                    },
+                    sendData: (data) => console.log("Telegram sendData:", data),
+                    close: () => console.log("Telegram close"),
+                    expand: () => {},
+                    ready: () => {},
+                    showAlert: (msg) => alert(msg)
+                }
+            };
+        }
+    </script>
+    <script src="https://telegram.org/js/telegram-web-app.js"></script>
+    <style>
+        /* Добавляем стили для локального тестирования */
+        body:not(.telegram-web-app) {
+            padding: 20px;
+            background: #f0f2f5;
+        }
+        /* ... остальные стили из предыдущего кода ... */
+    </style>
+</head>
+<body>
+    <!-- ... HTML-структура из предыдущего кода ... -->
+
+    <script>
+    // Полная версия кода с улучшениями
+    const tg = window.Telegram?.WebApp;
+    let score = 0;
+    let clickPower = 1;
+
+    // Элементы интерфейса
+    const elements = {
+        clickButton: document.getElementById('clickButton'),
+        scoreElement: document.getElementById('score'),
+        upgrades: document.querySelectorAll('.upgrade')
+    };
+
+    // Инициализация
+    function init() {
+        checkElements();
+        loadScore();
+        setupEventListeners();
+        initTelegramFeatures();
+        updateScore();
+        console.log("Game initialized!");
+    }
+
+    function checkElements() {
+        Object.entries(elements).forEach(([name, element]) => {
+            if (!element) console.error(`Element ${name} not found!`);
+        });
+    }
+
+    function setupEventListeners() {
+        if (elements.clickButton) {
+            elements.clickButton.addEventListener('click', handleClick);
+        }
+
+        elements.upgrades.forEach(btn => {
+            btn.addEventListener('click', handleUpgrade);
+        });
+    }
+
+    function initTelegramFeatures() {
+        if (tg) {
+            try {
+                tg.expand();
+                tg.ready();
+                tg.MainButton.setText("Сохранить").show();
+                tg.MainButton.onClick(handleSave);
+            } catch (e) {
+                console.error("Telegram API error:", e);
+            }
+        } else {
+            console.warn("Telegram WebApp not detected. Running in browser mode.");
+            // Создаем кнопку сохранения для браузера
+            const browserSaveBtn = document.createElement('button');
+            browserSaveBtn.textContent = "Сохранить (тестовый режим)";
+            browserSaveBtn.style.margin = "20px";
+            browserSaveBtn.addEventListener('click', handleSave);
+            document.body.appendChild(browserSaveBtn);
+        }
+    }
+
+    // ... остальные функции из предыдущего кода ...
+
+    // Запуск при полной загрузке
+    if (document.readyState === 'complete') {
+        init();
+    } else {
+        document.addEventListener('DOMContentLoaded', init);
+    }
+    </script>
+</body>
+</html>
